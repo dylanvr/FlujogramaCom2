@@ -1,0 +1,206 @@
+options:
+  parameters:
+    author: ''
+    catch_exceptions: 'True'
+    category: '[GRC Hier Blocks]'
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: ''
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: qt_gui
+    hier_block_src_path: '.:'
+    id: Lab2
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: prompt
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: Not titled yet
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 8]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: frecuencia1
+  id: variable
+  parameters:
+    comment: ''
+    value: '100'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [283, 11]
+    rotation: 0
+    state: true
+- name: samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '32000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [184, 12]
+    rotation: 0
+    state: enabled
+- name: analog_sig_source_x_0
+  id: analog_sig_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: '1'
+    comment: ''
+    freq: frecuencia1
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    phase: '0'
+    samp_rate: samp_rate
+    type: float
+    waveform: analog.GR_SIN_WAVE
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [178, 176]
+    rotation: 0
+    state: true
+- name: epy_block_0
+  id: epy_block
+  parameters:
+    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
+      \ GRC will instantiate the first class it finds\nto get ports and parameters\
+      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
+      \ them are required to have default values!\n\"\"\"\n\nimport numpy as np\n\
+      from gnuradio import gr\n\n\nclass blk(gr.sync_block):  # other base classes\
+      \ are basic_block, decim_block, interp_block\n    \"\"\"Embedded Python Block\
+      \ example - a simple multiply const\"\"\"\n\n    def __init__(self):  # only\
+      \ default arguments here\n        \"\"\"arguments to this function show up as\
+      \ parameters in GRC\"\"\"\n        gr.sync_block.__init__(\n            self,\n\
+      \            name='mi_promedio',   # will show up in GRC\n            in_sig=[np.float32],\
+      \   # complex64, \n            out_sig=[np.float32, np.float32, np.float32,\
+      \ np.float32, np.float32]\n       \n        \n        )\n        # if an attribute\
+      \ with the same name as a parameter is found,\n        # a callback is registered\
+      \ (properties work, too).\n       \n        \n        self.acum_anterior = 0\n\
+      \        self.Ntotales = 0\n        self.acum_anterior1 = 0\n        self.acum_anterior2\
+      \ = 0\n        \n\n    def work(self, input_items, output_items):\n        \"\
+      \"\"example: multiply with constant\"\"\"\n        #output_items[0][:] = input_items[0]\
+      \ * self.example_param\n        \n        \n        \n        x = input_items[0]\
+      \   #Senial de entrada.\n        y0 = output_items[0] #Promedio de la senial\n\
+      \        y1 = output_items[1] #Media de la senial\n        y2 = output_items[2]\
+      \ #RMS de la senial\n        y3 = output_items[3] #Potencia promedio de la senial\n\
+      \        y4 = output_items[4] #Desviacion estandar de la senial\n        \n\
+      \        #Calculo del promedio \n        N = len(x)\n        #print(N)\n   \
+      \     self.Ntotales = self.Ntotales + N\n        acumulado = self.acum_anterior\
+      \ + np.cumsum(x)\n        self.acum_anterior = acumulado[N-1]\n        y0[:]=acumulado/self.Ntotales\n\
+      \        \n        \n        #Calculo de la media cuadratica\n        x2=np.multiply(x,x)\n\
+      \        acumulado1 = self.acum_anterior1 + np.cumsum(x2)\n        self.acum_anterior1\
+      \ = acumulado1[N-1]\n        y1[:] = acumulado1/self.Ntotales\n        \n  \
+      \    \n        \n        \n        #Calculo de la RMS\n        y2[:] = np.sqrt(y1)\n\
+      \        \n        #Calculo de la potencia promedio\n        y3[:] = y1\n  \
+      \      \n        #Calculo de la desviacion estandar\n        x3 = np.multiply(x-y0,x-y0)\n\
+      \        acumulado2 = self.acum_anterior2 + np.cumsum(x3)\n        self.acum_anterior2\
+      \ = acumulado2[N-1]        \n        y4[:] = np.sqrt(acumulado2/self.Ntotales)\n\
+      \n\n       \n        return N\n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('mi_promedio', 'blk', [], [('0', 'float', 1)], [('0', 'float', 1),
+      ('1', 'float', 1), ('2', 'float', 1), ('3', 'float', 1), ('4', 'float', 1)],
+      'Embedded Python Block example - a simple multiply const', [])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [552, 284]
+    rotation: 0
+    state: enabled
+- name: qtgui_number_sink_0
+  id: qtgui_number_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    autoscale: 'False'
+    avg: '0'
+    color1: ("black", "black")
+    color10: ("black", "black")
+    color2: ("black", "black")
+    color3: ("black", "black")
+    color4: ("black", "black")
+    color5: ("black", "black")
+    color6: ("black", "black")
+    color7: ("black", "black")
+    color8: ("black", "black")
+    color9: ("black", "black")
+    comment: ''
+    factor1: '1'
+    factor10: '1'
+    factor2: '1'
+    factor3: '1'
+    factor4: '1'
+    factor5: '1'
+    factor6: '1'
+    factor7: '1'
+    factor8: '1'
+    factor9: '1'
+    graph_type: qtgui.NUM_GRAPH_HORIZ
+    gui_hint: ''
+    label1: Promedio
+    label10: ''
+    label2: Media Cuadratica.
+    label3: RMS
+    label4: Potencia promedio
+    label5: Desviacion estandar
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    max: '1'
+    min: '-1'
+    name: '""'
+    nconnections: '5'
+    type: float
+    unit1: ''
+    unit10: ''
+    unit2: ''
+    unit3: ''
+    unit4: ''
+    unit5: ''
+    unit6: ''
+    unit7: ''
+    unit8: ''
+    unit9: ''
+    update_time: '0.10'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [799, 281]
+    rotation: 0
+    state: enabled
+
+connections:
+- [analog_sig_source_x_0, '0', epy_block_0, '0']
+- [epy_block_0, '0', qtgui_number_sink_0, '0']
+- [epy_block_0, '1', qtgui_number_sink_0, '1']
+- [epy_block_0, '2', qtgui_number_sink_0, '2']
+- [epy_block_0, '3', qtgui_number_sink_0, '3']
+- [epy_block_0, '4', qtgui_number_sink_0, '4']
+
+metadata:
+  file_format: 1
